@@ -5,22 +5,6 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 
-# posts = [
-#     {
-#         'author' : 'Humayon',
-#         'title': 'blog post 1',
-#         'content': 'first content',
-#         'date_posted':'august, 2022'
-#     },
-#     {
-#         'author' : 'Sharat',
-#         'title': 'blog post 2',
-#         'content': 'second content',
-#         'date_posted':'august, 2022'
-#     }
-# ]
-
-
 class PostListView(ListView):
     model = Post
     template_name = 'Blogger/home.html'
