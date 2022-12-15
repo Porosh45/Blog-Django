@@ -8,6 +8,7 @@
                 <p class="text-secondary">{{ user.email }}</p>
             </div>
         </div>
+        <a class = 'btn btn-outline-info' href=" {% url 'user-posts' user %}">All posts</a>
         <form method = "POST" enctype = "multipart/form-data">
         {% csrf_token %}
         <fieldset class = "form-group">
