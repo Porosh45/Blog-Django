@@ -5,6 +5,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+
 class PostListView(ListView):
     model = Post
     template_name = 'Blogger/home.html'
@@ -60,10 +61,6 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 def about(request):
-    return render(request, 'Blogger/about.html')
+    return render(request, 'Blogger/about.html', )
 
-@login_required(login_url='login')
-def about(request, pk):
-    form = CommentForm()
-    if request.method == 'POST':
-        post = Post.objects.get(id = pk)
+
