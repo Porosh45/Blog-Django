@@ -1,0 +1,8 @@
+{% extends "Blogger/base.html" %}
+{% block content %}
+    {% for user in users %}
+        <div>
+                <h3><a href="{% url 'user-posts' user %}">{{user}}</a></h3>
+        </div>
+    {% endfor %}
+{% endblock content %}

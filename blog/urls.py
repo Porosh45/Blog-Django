@@ -19,7 +19,7 @@ from User import views as User_views
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
-
+from User.views import UserList
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', User_views.register, name = 'register'),
@@ -33,7 +33,7 @@ urlpatterns = [
          name = 'password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='User/password_reset_complete.html'),
          name='password_reset_complete'),
-
+    path('user-list/', UserList.as_view(), name='user_list'),
 ]
 
 if settings.DEBUG:

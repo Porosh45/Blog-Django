@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from .forms import UserRegisterForm,UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView
+from django.contrib.auth.models import User
 
 def register(request):
     if request.method == 'POST':
@@ -36,3 +38,10 @@ def profile(request):
         'p_form' : p_form
     }
     return render(request,'User/profile.html',context)
+
+class UserList(ListView):
+    model = User
+    users = User.objects.all()
+    context_object_name = 'users'
+    template_name = 'User/user.html'
+
