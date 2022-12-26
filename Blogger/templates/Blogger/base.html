@@ -27,7 +27,7 @@
                 <a class = "nav-item nav-link" href = "{% url 'profile' %}">Profile ({{ user }}) </a>
                 <a class = "nav-item nav-link" href = "{% url 'logout' %}"> Logout</a>
             {% else %}
-                <a class="nav-item nav-link" href="{% url 'login'%}">Login</a>
+                <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
                 <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
             {% endif %}
           </div>
@@ -50,9 +50,7 @@
     <div class="col-md-4">
       <div class="content-section">
         <h3>Our Sidebar</h3>
-          <ul class="list-group">
-              <li> <h3><a href = "{% url 'user_list' %}">See All the Users</a></h3></li>
-          </ul>
+            <h4><a href = "{% url 'user_list' %}">See All the Users</a></h4>
         </p>
       </div>
     </div>

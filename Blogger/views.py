@@ -5,6 +5,23 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+import git
+from django.views.decorators.csrf import csrf_exempt
+
+
+@csrf_exempt
+def update(request):
+    if request.method == "POST":
+        repo = git.repo('porosh10.pythonanywhere.com')
+        origin = repo.remotes.origin
+
+        origin.pull()
+
+        return HttpResponse("Updated code on Pythonanywhere!")
+    else:
+        return HttpResponse("Couldn't update!")
+
+
 
 class PostListView(ListView):
     model = Post

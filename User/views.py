@@ -5,6 +5,7 @@ from .forms import UserRegisterForm,UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 def register(request):
     if request.method == 'POST':
@@ -39,7 +40,7 @@ def profile(request):
     }
     return render(request,'User/profile.html',context)
 
-class UserList(ListView):
+class UserList(LoginRequiredMixin, ListView):
     model = User
     users = User.objects.all()
     context_object_name = 'users'
