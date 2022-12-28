@@ -8,8 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import git
 from django.views.decorators.csrf import csrf_exempt
-from .forms import PostForm
+from .forms import PostForm, CommentForm
 from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
 
 @csrf_exempt
 def update(request):
@@ -49,19 +50,7 @@ class UserPostListView(ListView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'Blogger/Post_detail.html'
-    # comments = Comment.objects.all()
-    # dict = {
-    #     'post': 'post',
-    #     'comments': 'comments'
-    # }
-    # context_object_name = 'dict'
-    # print(dict)
-    # def get_queryset(self):
-    #     post = get_object_or_404(Post, id = self.kwargs.get('pk'))
-    #     # print(post)
-    #     var = Comment.objects.filter(post=post)
-    #     # print(var)
-    #     return var
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = get_object_or_404(Post, id = self.kwargs.get('pk'))
@@ -140,3 +129,16 @@ def about(request):
     return render(request, 'Blogger/about.html', )
 
 
+class CommentCreateView(LoginRequiredMixin, CreateView, FormView):
+    form_class = CommentForm
+    template_name = 'Blogger/Comment_form.html'
+    model = Comment
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        post = post = get_object_or_404(Post, id = self.kwargs.get('pk'))
+        form.instance.post = post
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        var =  self.kwargs.get('pk')
+        return reverse_lazy('post-detail', kwargs = {'pk': var})
