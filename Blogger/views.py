@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from .models import Post
+from .models import Post, Comment
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
@@ -48,6 +48,26 @@ class UserPostListView(ListView):
 
 class PostDetailView(DetailView):
     model = Post
+    template_name = 'Blogger/Post_detail.html'
+    # comments = Comment.objects.all()
+    # dict = {
+    #     'post': 'post',
+    #     'comments': 'comments'
+    # }
+    # context_object_name = 'dict'
+    # print(dict)
+    # def get_queryset(self):
+    #     post = get_object_or_404(Post, id = self.kwargs.get('pk'))
+    #     # print(post)
+    #     var = Comment.objects.filter(post=post)
+    #     # print(var)
+    #     return var
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = get_object_or_404(Post, id = self.kwargs.get('pk'))
+        context['comments'] = Comment.objects.filter(post=post)
+        return context
+
 
 
 # @login_required
