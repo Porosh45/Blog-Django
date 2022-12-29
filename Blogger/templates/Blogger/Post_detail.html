@@ -13,8 +13,15 @@
             </div>
             <h2>{{ post.title }}</h2>
             <p class="article-content">{{ post.content }}</p>
+            <p class="article-content">Post is liked by {{ post.likes_count }} users</p>
           </div>
         </article>
+
+        <div>
+            <a class = "btn btn-secondary btn-sm mt-1 mb-1" href = "{% url 'like' post.id %}"> Like</a>
+            <a class = "btn btn-secondary btn-sm mt-1 mb-1" href = "{% url 'comment' post.id %}"> Post a Comment</a>
+        </div>
+
     <div>
         {% for comment in comments %}
             <article class = "content-section">
@@ -23,7 +30,5 @@
             </article>
         {% endfor%}
     </div>
-    <div>
-        <a class = "btn btn-secondary btn-sm mt-1 mb-1" href = "{% url 'comment' post.id %}"> Comment</a>
-    </div>
+
 {% endblock content %}

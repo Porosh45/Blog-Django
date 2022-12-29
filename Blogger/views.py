@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from .models import Post, Comment
+from .models import Post, Comment, Like
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
@@ -11,19 +11,20 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import PostForm, CommentForm
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
-
-@csrf_exempt
-def update(request):
-    if request.method == "POST":
-        repo = git.repo("porosh10.pythonanywhere.com/")
-        origin = repo.remotes.origin
-
-        origin.pull()
-
-        return HttpResponse("Updated code on Pythonanywhere!")
-    else:
-        return HttpResponse("Couldn't update!")
-
+from django.core.paginator import Paginator
+from django.views import View
+# @csrf_exempt
+# def update(request):
+#     if request.method == "POST":
+#         repo = git.repo("porosh10.pythonanywhere.com/")
+#         origin = repo.remotes.origin
+#
+#         origin.pull()
+#
+#         return HttpResponse("Updated code on Pythonanywhere!")
+#     else:
+#         return HttpResponse("Couldn't update!")
+#
 
 
 class PostListView(ListView):
@@ -32,14 +33,14 @@ class PostListView(ListView):
     posts = Post.objects.all()
     context_object_name = 'posts'
     ordering = ['-date_posted']
-    paginate_by = 5
+    paginate_by = 3
 
 class UserPostListView(ListView):
     model = Post
     template_name = 'Blogger/user_posts.html'
     posts = Post.objects.all()
     context_object_name = 'posts'
-    paginate_by = 5
+    paginate_by = 3
 
     def get_queryset(self):
         user = get_object_or_404(User, username = self.kwargs.get('username'))
@@ -47,16 +48,20 @@ class UserPostListView(ListView):
 
 
 
-class PostDetailView(DetailView):
+class PostDetailView(ListView):
     model = Post
     template_name = 'Blogger/Post_detail.html'
+    paginate_by = 3
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = get_object_or_404(Post, id = self.kwargs.get('pk'))
-        context['comments'] = Comment.objects.filter(post=post)
+        comments = Comment.objects.filter(post=post)
+        context = {
+            'comments': comments,
+            'post': post,
+         }
         return context
-
 
 
 # @login_required
@@ -133,12 +138,36 @@ class CommentCreateView(LoginRequiredMixin, CreateView, FormView):
     form_class = CommentForm
     template_name = 'Blogger/Comment_form.html'
     model = Comment
+    paginate_by = 3
     def form_valid(self, form):
         form.instance.user = self.request.user
-        post = post = get_object_or_404(Post, id = self.kwargs.get('pk'))
+        post = get_object_or_404(Post, id = self.kwargs.get('pk'))
         form.instance.post = post
         return super().form_valid(form)
 
     def get_success_url(self):
         var =  self.kwargs.get('pk')
         return reverse_lazy('post-detail', kwargs = {'pk': var})
+
+class LikeView(LoginRequiredMixin, View):
+    model = Like
+    def get(self, request, **kwargs):
+        post = Post.objects.get(id = self.kwargs.get('pk'))
+        print(post)
+        like = Like.objects.filter(post=post, user=self.request.user).first()
+        print(like)
+        print("check function")
+        if like == None:
+            print("like nai")
+            like = Like.objects.create(post = post, user = self.request.user)
+            like.save()
+            post.likes_count += 1
+            post.save()
+        else:
+            print("like ache")
+            like.delete()
+            post.likes_count += -1
+            post.save()
+        print("done liking")
+        return redirect(reverse_lazy('post-detail', kwargs = {'pk': self.kwargs.get('pk')}))
+
